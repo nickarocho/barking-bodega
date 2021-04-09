@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-barkingbodega-dev-130529-authRole",
+      "UnauthRoleArn": "arn:aws:iam::947511734122:role/amplify-barkingbodega-dev-130529-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::947511734122:role/amplify-barkingbodega-dev-130529-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-barkingbodega-dev-130529-deployment",
+      "UnauthRoleName": "amplify-barkingbodega-dev-130529-unauthRole",
+      "StackName": "amplify-barkingbodega-dev-130529",
+      "StackId": "arn:aws:cloudformation:us-west-2:947511734122:stack/amplify-barkingbodega-dev-130529/f0a353a0-996e-11eb-8e46-06daf168ddd3",
+      "AmplifyAppId": "d3tpbi16wcu4j1"
+    }
+  }
+}
