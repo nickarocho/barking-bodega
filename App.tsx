@@ -1,84 +1,59 @@
-import { StatusBar } from 'expo-status-bar';
+import * as React from 'react';
+import { Button, View, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-import Amplify from 'aws-amplify';
-import config from './src/aws-exports';
-Amplify.configure(config);
-
-import React, { useEffect, useState } from 'react'
-import {
-  View, Text, StyleSheet, TextInput, Button
-} from 'react-native'
-
-import { API, graphqlOperation } from 'aws-amplify'
-import { createTodo } from './src/graphql/mutations'
-import { listTodos } from './src/graphql/queries'
-
-const initialState = { name: '', description: '' }
-
-const App = () => {
-  const [formState, setFormState] = useState(initialState)
-  const [todos, setTodos] = useState([])
-
-  useEffect(() => {
-    fetchTodos()
-  }, [])
-
-  function setInput(key: string, value: string) {
-    setFormState({ ...formState, [key]: value })
-  }
-
-  async function fetchTodos() {
-    try {
-      const todoData = await API.graphql(graphqlOperation(listTodos))
-      const todos = todoData.data.listTodos.items
-      setTodos(todos)
-    } catch (err) { console.log('error fetching todos') }
-  }
-
-  async function addTodo() {
-    try {
-      const todo = { ...formState }
-      setTodos([...todos, todo])
-      setFormState(initialState)
-      await API.graphql(graphqlOperation(createTodo, {input: todo}))
-    } catch (err) {
-      console.log('error creating todo:', err)
-    }
-  }
-
+function HomeScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <TextInput
-        onChangeText={val => setInput('name', val)}
-        style={styles.input}
-        value={formState.name}
-        placeholder="Name"
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Home Screen</Text>
+      <Button
+        title="Go to Details"
+        onPress={() => {
+          /* 1. Navigate to the Details route with params */
+          navigation.navigate('Details', {
+            itemId: 86,
+            otherParam: 'anything you want here',
+          });
+        }}
       />
-      <TextInput
-        onChangeText={val => setInput('description', val)}
-        style={styles.input}
-        value={formState.description}
-        placeholder="Description"
-      />
-      <Button title="Create Todo" onPress={addTodo} />
-      {
-        todos.map((todo, index) => (
-          <View key={todo.id ? todo.id : index} style={styles.todo}>
-            <Text style={styles.todoName}>{todo.name}</Text>
-            <Text>{todo.description}</Text>
-          </View>
-        ))
-      }
-      <StatusBar />
     </View>
-  )
+  );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20 },
-  todo: {  marginBottom: 15 },
-  input: { height: 50, backgroundColor: '#ddd', marginBottom: 10, padding: 8 },
-  todoName: { fontSize: 18 }
-})
+function DetailsScreen({ route, navigation }) {
+  /* 2. Get the param */
+  const { itemId, otherParam } = route.params;
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Details Screen</Text>
+      <Text>itemId: {JSON.stringify(itemId)}</Text>
+      <Text>otherParam: {JSON.stringify(otherParam)}</Text>
+      <Button
+        title="Go to Details... again"
+        onPress={() =>
+          navigation.push('Details', {
+            itemId: Math.floor(Math.random() * 100),
+          })
+        }
+      />
+      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </View>
+  );
+}
 
-export default App
+const Stack = createStackNavigator();
+
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Details" component={DetailsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+export default App;
